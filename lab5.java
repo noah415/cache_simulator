@@ -1,10 +1,23 @@
+import java.io.*;
+import java.util.*;
 
 class lab5
 {
 
     private static int getTag(String line, int KB, int wordBlocks)
     {
-        
+        int address, bitsOfIndex, tag, width, blockOffset, bitshift = 0;
+
+        address = Integer.parseInt(line, 16);
+        width = wordBlocks * 4;
+        bitsOfIndex = (int)(Math.log(KB/width) / Math.log(2));
+        blockOffset = (int)(wordBlocks / 2);
+
+        bitshift = bitsOfIndex + blockOffset + 2;
+
+        tag = address >> bitshift;
+
+        return tag;
     }
 
     private static void processLine(String line)
