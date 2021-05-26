@@ -28,7 +28,18 @@ class lab5
 
         while (scanner.hasNextLine())
         {
-            processLine(scanner.nextLine());
+            processLine(scanner.nextLine().split(" ")[1]);
         }
     }
+
+    public static void printCache(int cacheNum, int cacheSize,
+                                  int associativity, int blockSize,
+                                  int hits, double hitRate){
+        System.out.println("Cache #" + cacheNum);
+        System.out.println("Cache size: " + cacheSize + "B" + "\t\t" + "Associativity: " + associativity + "\t\t" + "Block size: " + blockSize);
+        System.out.print("Hits: " + hits + "\t");
+        System.out.printf("Hit Rate: %.2f\n", hitRate);
+        System.out.print("---------------------------\n");
+    }
 }
+
