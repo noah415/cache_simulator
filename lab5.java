@@ -3,6 +3,7 @@ import java.util.*;
 
 class lab5
 {
+    public static int lineNum = 0;
 
     private static void processLine(String line, ArrayList<Cache> caches)
     {
@@ -25,6 +26,10 @@ class lab5
     private static void initCaches(ArrayList<Cache> caches)
     {
         caches.add(new Cache(1, 1, 2048, 1));
+        caches.add(new Cache(1, 2, 2048, 2));
+        caches.add(new Cache(1, 3, 2048, 4));
+        caches.add(new Cache(2, 4, 2048, 1));
+        caches.add(new Cache(1, 7, 4096, 1));
     }
 
     public static void main(String[] args)
@@ -41,11 +46,12 @@ class lab5
             while (scanner.hasNextLine())
             {
                 processLine((scanner.nextLine().split("\\s+"))[1], caches);
+                lineNum++;
             }
 
             printCaches(caches);
         }
-        catch (Exception e)
+        catch (FileNotFoundException e)
         {
             System.out.println("Fail: " + e);
         }
