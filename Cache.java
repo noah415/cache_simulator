@@ -22,20 +22,21 @@ class Cache
         this.cacheNum = cacheNum;
         this.blockSize = blockSize;
 
-        this.cacheLen = (cacheSize / (blockSize * 4));
-
         // create the array of tags based on this info
         if (associativity == 1)
         {
+            this.cacheLen = (cacheSize / (blockSize * 4));
             list1 = new Entry[this.cacheLen];
         }
         else if (associativity == 2)
         {
+            this.cacheLen = (cacheSize / (blockSize * 4) / 2);
             list1 = new Entry[this.cacheLen];
             list2 = new Entry[this.cacheLen];
         }
         else if (associativity == 4)
         {
+            this.cacheLen = (cacheSize / (blockSize * 4) / 4);
             list1 = new Entry[this.cacheLen];
             list2 = new Entry[this.cacheLen];
             list3 = new Entry[this.cacheLen];
