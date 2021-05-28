@@ -51,20 +51,52 @@ class Cache
         System.out.println("Cache #" + cacheNum);
         System.out.println("Cache size: " + cacheSize + "B" + "\t\t" + "Associativity: " + associativity + "\t\t" + "Block size: " + blockSize);
         System.out.print("Hits: " + hitCount + "\t");
-        System.out.printf("Hit Rate: %.2f\n", hitRate);
+        System.out.printf("Hit Rate: %.2f%%\n", hitRate);
         System.out.print("---------------------------\n");
+    }
+
+    private int findIndexSmallest(int[] array)
+    {
+        int index = 0;
+        int min = array[index];
+
+        for (int i = 0; i < array.length; i++)
+        {
+            if (min > array[i])
+            {
+                min = array[i];
+                index = i;
+            }
+        }
+        return index;
     }
 
     private void replaceLRU(int tag, int index)
     {
-        int lowestLine = -1;
-
         if (this.associativity == 2)
         {
             if (list1[index % this.cacheLen].lineNum < list2[index % this.cacheLen].lineNum)
                 list1[index % this.cacheLen] = new Entry(tag, lab5.lineNum);
             else
                 list2[index % this.cacheLen] = new Entry(tag, lab5.lineNum);
+        }
+        if (this.associativity == 4)
+        {
+            int[] lineNums = {
+                    list1[index % this.cacheLen].lineNum, list2[index % this.cacheLen].lineNum,
+                    list3[index % this.cacheLen].lineNum, list4[index % this.cacheLen].lineNum
+                    };
+
+            int smallestIndex = findIndexSmallest(lineNums);
+
+            if (smallestIndex == 0)
+                list1[index % this.cacheLen] = new Entry(tag, lab5.lineNum);
+            else if (smallestIndex == 1)
+                list2[index % this.cacheLen] = new Entry(tag, lab5.lineNum);
+            else if (smallestIndex == 2)
+                list3[index % this.cacheLen] = new Entry(tag, lab5.lineNum);
+            else if (smallestIndex == 3)
+                list4[index % this.cacheLen] = new Entry(tag, lab5.lineNum);
         }
     }
 
@@ -86,16 +118,56 @@ class Cache
         }
         else if (this.associativity == 2)
         {
-            boolean isPossible1 = list1[index % this.cacheLen] == null || list1[index % this.cacheLen].tag == tag;
-            boolean isPossible2 = list2[index % this.cacheLen] == null || list2[index % this.cacheLen].tag == tag;
-
-            if ((list1[index % this.cacheLen] != null && list1[index % this.cacheLen].tag == tag) ||
-                (list2[index % this.cacheLen] != null && list2[index % this.cacheLen].tag == tag))
+            if (list1[index % this.cacheLen] != null && list1[index % this.cacheLen].tag == tag)
+            {
+                list1[index % this.cacheLen].lineNum = lab5.lineNum;
                 this.hitCount++;
+            }
+            else if (list2[index % this.cacheLen] != null && list2[index % this.cacheLen].tag == tag)
+            {
+                list2[index % this.cacheLen].lineNum = lab5.lineNum;
+                this.hitCount++;
+            }
             else if (list1[index % this.cacheLen] == null)
                 list1[index % this.cacheLen] = new Entry(tag, lab5.lineNum);
             else if (list2[index % this.cacheLen] == null)
                 list2[index % this.cacheLen] = new Entry(tag, lab5.lineNum);
+            else
+                replaceLRU(tag, index);
+
+            this.totCount++;
+        }
+
+        else if (this.associativity == 4)
+        {
+            if (list1[index % this.cacheLen] != null && list1[index % this.cacheLen].tag == tag)
+            {
+                list1[index % this.cacheLen].lineNum = lab5.lineNum;
+                this.hitCount++;
+            }
+            else if (list2[index % this.cacheLen] != null && list2[index % this.cacheLen].tag == tag)
+            {
+                list2[index % this.cacheLen].lineNum = lab5.lineNum;
+                this.hitCount++;
+            }
+            else if (list3[index % this.cacheLen] != null && list3[index % this.cacheLen].tag == tag)
+            {
+                list3[index % this.cacheLen].lineNum = lab5.lineNum;
+                this.hitCount++;
+            }
+            else if (list4[index % this.cacheLen] != null && list4[index % this.cacheLen].tag == tag)
+            {
+                list4[index % this.cacheLen].lineNum = lab5.lineNum;
+                this.hitCount++;
+            }
+            else if (list1[index % this.cacheLen] == null)
+                list1[index % this.cacheLen] = new Entry(tag, lab5.lineNum);
+            else if (list2[index % this.cacheLen] == null)
+                list2[index % this.cacheLen] = new Entry(tag, lab5.lineNum);
+            else if (list3[index % this.cacheLen] == null)
+                list3[index % this.cacheLen] = new Entry(tag, lab5.lineNum);
+            else if (list4[index % this.cacheLen] == null)
+                list4[index % this.cacheLen] = new Entry(tag, lab5.lineNum);
             else
                 replaceLRU(tag, index);
 
@@ -110,8 +182,8 @@ class Cache
         width = blockSize * 4;
         address = Integer.parseInt(line, 16);
 
-        bitsOfIndex = (int)(Math.log(cacheSize/width) / Math.log(2));
-        blockOffset = (int)(blockSize / 2);
+        bitsOfIndex = (int)(Math.log(this.cacheLen/width) / Math.log(2));
+        blockOffset = (int)(this.blockSize / 2);
 
         bitshift = bitsOfIndex + blockOffset + 2;
 
@@ -128,8 +200,8 @@ class Cache
         width = blockSize * 4;
         address = Integer.parseInt(line, 16);
 
-        bitsOfIndex = (int)(Math.log(cacheSize/width) / Math.log(2));
-        blockOffset = (int)(blockSize / 2);
+        bitsOfIndex = (int)(Math.log(this.cacheLen) / Math.log(2));
+        blockOffset = (int)(this.blockSize / 2);
 
         index = address >> (blockOffset + 2);
 

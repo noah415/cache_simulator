@@ -29,6 +29,8 @@ class lab5
         caches.add(new Cache(1, 2, 2048, 2));
         caches.add(new Cache(1, 3, 2048, 4));
         caches.add(new Cache(2, 4, 2048, 1));
+        caches.add(new Cache(4, 5, 2048, 1));
+        caches.add(new Cache(4, 6, 2048, 4));
         caches.add(new Cache(1, 7, 4096, 1));
     }
 
